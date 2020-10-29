@@ -23,6 +23,9 @@ app.use((req, res, next) =>{
     next(); 
 })
 
+//Parse data in body as JSON
+router.use(express.json());
+
 //get list of schedule items
 router.get('/', (req, res) =>{
     res.send(data);
@@ -43,6 +46,20 @@ router.get('/:data_id', (req,res) => {
     }
 })
 
+//create or replace class data for a given id
+router.put('/:id', (req, res) =>{
+    const new_node = req.body;
+    console.log("class : ", new_node);
+    //Add ID field
+    new_node.catalog_nbr = parseInt(req.params.id);
+
+    console.log(new_node);
+    
+    //Replace the node with a new one
+    const node = data.findIndex(d => d.catalog_nbr === new_node.id);
+    data[node] = req.body;
+    res.send(new_node);
+})
 
 
 //Install the router at /api/parts
