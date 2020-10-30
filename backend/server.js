@@ -32,8 +32,48 @@ router.get('/', (req, res) =>{
    // console.log(res)
 })
 
+//get details for subject and class names
+router.get('/:data_subject', (req,res) => {
+    const subject = req.params.data_subject;
+
+    var node = data.filter(function(d){
+        return d.subject ===subject;
+    })
+    .map(function(d){
+        var info = {"subject": d.subject,
+                    "className": d.className
+                   }
+    return info;
+    });
+    // const node = data.map( function(d){
+    //     if(d.subject === subject){
+    //         var info = {"subject": d.subject,
+    //                     "className": d.className
+    //                     }
+    //         return info;               
+    //     }  
+    res.send(node);
+    
+    })
+    
+    
+    // const node = (data.map(d =>{
+    //     d.subject == subject;
+    // }))
+    // // const node = data.find(d => d.subject  == subject);
+
+    // if(node){
+    //     res.send(node);
+    //   //  res.send(node.className)
+    // }else{
+    //     res.status(404).send("Subject " + subject + " Was not found");
+    // }
+//})
+
+
+//get 
 //get details for a given node
-router.get('/:data_id', (req,res) => {
+router.get('/:data_subject/:data_id', (req,res) => {
     const id = req.params.data_id;
     
     const node = data.find(d => d.catalog_nbr.toString() === id);
@@ -50,16 +90,44 @@ router.get('/:data_id', (req,res) => {
 router.put('/:id', (req, res) =>{
     const new_node = req.body;
     console.log("class : ", new_node);
-    //Add ID field
+    //Add class code field
     new_node.catalog_nbr = parseInt(req.params.id);
+    
+    
 
     console.log(new_node);
     
     //Replace the node with a new one
     const node = data.findIndex(d => d.catalog_nbr === new_node.id);
-    data[node] = req.body;
+    if(node <0){
+        console.log("creating new part");
+        data.push(new_node);
+    }
+    else{
+        console.log("Modifying part", req.params.id);
+        data[node] = new_node;
+    }
     res.send(new_node);
 })
+
+//Update existing schedule item
+router.post('/:id', (req,res) => {
+    const new_node = req.body;
+    console.log("class : ", new_node);
+
+    //find the node
+    const node = data.findIndex(d => d.catalog_nbr === parseInt(req.params.id));
+
+    if(node <0){
+        res.status(404).send("Part" + req.params.id + "Not found");
+    }
+    else{
+        console.log("Changing node for", req.params.id);
+        data[node].stock += parseInt(req.body.stock);
+        res.send(req.body);
+    }
+})
+
 
 
 //Install the router at /api/parts
