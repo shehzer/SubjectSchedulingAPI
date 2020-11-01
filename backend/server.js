@@ -2,11 +2,16 @@ const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 const express = require('express');
 const app = express();
 const router = express.Router();
-// const fs = require('fs');
-// var data = JSON.parse(fs.readFileSync('./data.json', 'utf8'));
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('db.json');
+const db = low(adapter);
+db.defaults({schedules:[]}).write();
+const cors = require('cors');
 var data = require('./data.json');
 
 const PORT = 4000;
+app.use(cors());
 
 
 
@@ -26,108 +31,217 @@ app.use((req, res, next) =>{
 //Parse data in body as JSON
 router.use(express.json());
 
-//get list of schedule items
-router.get('/', (req, res) =>{
-    res.send(data);
-   // console.log(res)
-})
+router.route('/')
+    .get((req,res)=>{
+        const node= data.map(function(d){
+            var info = {"subject": d.subject,
+                        "className": d.className
+                       }
+            return info;
+        });
+    
+        res.send(node);
+    })
 
-//get details for subject and class names
-router.get('/:data_subject', (req,res) => {
-    const subject = req.params.data_subject;
+    // // Create a schedule
+    .post((req,res)=>{
+        const new_schedule = req.body;
+        data.push(new_schedule);
+        var info = {
+                "message": "The schedule" + new_schedule + "has been successfully created"
+                }
+        res.send(info);
 
+
+    })
+
+    router.route('/:data_subject')
+
+    .get((req,res) =>{
+        const subject = req.params.data_subject;
+        var exists = data.find(d => d.subject === subject);
+        var node = data.filter(function(d){
+            return d.subject ===subject;
+        })
+        .map(function(d){
+            var info = {"subject": d.subject,
+                        "catalog_nbr": d.catalog_nbr
+                       }
+        return info;
+        });
+        if(exists){
+            res.send(node);
+        }
+        else{
+            res.status(404).send("Subject " + subject + " was not found");
+        }
+
+    })
+
+    // .post((req,res)=>{
+    //     const new_schedule = req.body;
+    //     if(new_schedule.)
+
+
+    // })
+
+    router.route('/:data_subject/:data_id')
+    .get((req,res) =>{
+        const subject = req.params.data_subject;
+    const id = req.params.data_id;
+    var exists = data.find(d => d.subject === subject);
+    var not_Id = data.find( d=> d.catalog_nbr === id);
     var node = data.filter(function(d){
-        return d.subject ===subject;
+        return  d.subject ===subject;
+    })
+    .filter(function(d){
+        return d.catalog_nbr.toString() ===id;
     })
     .map(function(d){
-        var info = {"subject": d.subject,
-                    "className": d.className
+        var info = {
+
+                    "subject": d.subject,
+                    "catalog_nbr": d.catalog_nbr,
+                    "course info": d.course_info 
                    }
-    return info;
+        return info;
     });
-    // const node = data.map( function(d){
-    //     if(d.subject === subject){
-    //         var info = {"subject": d.subject,
-    //                     "className": d.className
-    //                     }
-    //         return info;               
-    //     }  
-    res.send(node);
-    
-    })
-    
-    
-    // const node = (data.map(d =>{
-    //     d.subject == subject;
-    // }))
-    // // const node = data.find(d => d.subject  == subject);
 
-    // if(node){
-    //     res.send(node);
-    //   //  res.send(node.className)
-    // }else{
-    //     res.status(404).send("Subject " + subject + " Was not found");
-    // }
-//})
-
-
-//get 
-//get details for a given node
-router.get('/:data_subject/:data_id', (req,res) => {
-    const id = req.params.data_id;
-    
-    const node = data.find(d => d.catalog_nbr.toString() === id);
-    
-    if(node){
-        res.send(node);
+    if(!exists){
+        res.status(404).send("Subject " + subject + " was not found");
     }
-    else{
+    else if(!not_Id){
         res.status(404).send("Class code " + id + " was not found");
     }
-})
+    else{
+        res.send(node);
+    }
+    })
+
+
+
+
+//get details for the list
+        // router.get('/', (req,res) => {
+
+            
+        // const node= data.map(function(d){
+        //         var info = {"subject": d.subject,
+        //                     "className": d.className
+        //                 }
+        //     return info;
+        //     });
+
+        //     res.send(node);
+            
+        //     });
+//get details for subject and course code
+        // router.get('/:data_subject', (req,res) => {
+        //     const subject = req.params.data_subject;
+        //     var exists = data.find(d => d.subject === subject);
+        //     var node = data.filter(function(d){
+        //         return d.subject ===subject;
+        //     })
+        //     .map(function(d){
+        //         var info = {"subject": d.subject,
+        //                     "catalog_nbr": d.catalog_nbr
+        //                 }
+        //     return info;
+        //     });
+        //     if(exists){
+        //         res.send(node);
+        //     }
+        //     else{
+        //         res.status(404).send("Subject " + subject + " was not found");
+        //     }
+            
+            
+        //     })
+    
+    
+
+
+//Task 3: But ask what is optional course
+            // router.get('/:data_subject/:data_id', (req,res) => {
+            //     const subject = req.params.data_subject;
+            //     const id = req.params.data_id;
+            //     var exists = data.find(d => d.subject === subject);
+            //     var not_Id = data.find( d=> d.catalog_nbr === id);
+            //     var node = data.filter(function(d){
+            //         return  d.subject ===subject;
+            //     })
+            //     .filter(function(d){
+            //         return d.catalog_nbr.toString() ===id;
+            //     })
+            //     .map(function(d){
+            //         var info = {
+
+            //                     "subject": d.subject,
+            //                     "catalog_nbr": d.catalog_nbr,
+            //                     "course info": d.course_info 
+            //                 }
+            //         return info;
+            //     });
+
+            //     if(!exists){
+            //         res.status(404).send("Subject " + subject + " was not found");
+            //     }
+            //     else if(!not_Id){
+            //         res.status(404).send("Class code " + id + " was not found");
+            //     }
+            //     else{
+            //         res.send(node);
+            //     }
+            // })
+
+
+
 //******************Put request does not overide  */
 //create or replace class data for a given id
-router.put('/:id', (req, res) =>{
-    const new_node = req.body;
-    console.log("class : ", new_node);
-    //Add class code field
-    new_node.catalog_nbr = parseInt(req.params.id);
-    
-    
 
-    console.log(new_node);
-    
-    //Replace the node with a new one
-    const node = data.findIndex(d => d.catalog_nbr === new_node.id);
-    if(node <0){
-        console.log("creating new part");
-        data.push(new_node);
-    }
-    else{
-        console.log("Modifying part", req.params.id);
-        data[node] = new_node;
-    }
-    res.send(new_node);
+router.get('/schedules', (req,res) => {
+    const data = db.get("schedules").value()
+    return res.json(data);
 })
 
-//Update existing schedule item
-router.post('/:id', (req,res) => {
-    const new_node = req.body;
-    console.log("class : ", new_node);
+router.put('/schedules/:name', (req, res) =>{
+    var name = req.params.name;
 
-    //find the node
-    const node = data.findIndex(d => d.catalog_nbr === parseInt(req.params.id));
-
-    if(node <0){
-        res.status(404).send("Part" + req.params.id + "Not found");
+    for(var i =0; i<db.getState().schedules[i].length;i++){
+        if(db.getState().schedules[i].name == name){
+            res.status(404).send("ahlie")
+            return;
+        }
+        
     }
-    else{
-        console.log("Changing node for", req.params.id);
-        data[node].stock += parseInt(req.body.stock);
-        res.send(req.body);
-    }
+    db.get('schedules').push({name}).write();
+    res.json({ success: true})
+    // res.status(200).send();
 })
 
+// //Update existing schedule item
+// router.put('/:id', (req,res) => {
+//     const new_node = req.body;
+//     console.log("class : ", new_node);
+
+//     //find the node
+//     const node = data.findIndex(d => d.catalog_nbr === parseInt(req.params.id));
+
+//     if(node <0){
+//         res.status(404).send("Part" + req.params.id + "Not found");
+//     }
+//     else{
+//         console.log("Changing node for", req.params.id);
+//         data[node].stock += parseInt(req.body.stock);
+//         res.send(req.body);
+//     }
+// })
+
+
+// //create a new schedule
+// router.post('/:schedule_name', (req,res) =>{
+//     const new_node = req.body;
+// })
 
 
 //Install the router at /api/parts
