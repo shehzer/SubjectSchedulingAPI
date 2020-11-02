@@ -40,17 +40,7 @@ router.route('/')
         res.send(node);
     })
 
-    // // // Create a schedule
-    // .post((req,res)=>{
-    //     const new_schedule = req.body;
-    //     data.push(new_schedule);
-    //     var info = {
-    //             "message": "The schedule" + new_schedule + "has been successfully created"
-    //             }
-    //     res.send(info);
-
-
-    // })
+   
 
     router.route('/:data_subject')
 
@@ -75,12 +65,6 @@ router.route('/')
 
     })
 
-    // .post((req,res)=>{
-    //     const new_schedule = req.body;
-    //     if(new_schedule.)
-
-
-    // })
 
     router.route('/subject/:data_subject/:data_id')
     .get((req,res) =>{
@@ -132,7 +116,7 @@ router.put('/schedule/:name', (req,res) =>{
 
 //task 5
 
-router.put('/write/schedule/:name',(req,res)=>{
+router.put('/create/schedule/:name',(req,res)=>{
     const name = req.params.name;
     const schedule = req.body;
     let subCode = schedule.subjectCode
@@ -182,7 +166,7 @@ router.route('/schedules/:name/')
 });
 
 //Task 8
-router.get('/disp/schedule', (req,res)=>{
+router.get('/show/schedule', (req,res)=>{
     let scheduleList=[];
     for(let i = 0; i<db.getState().schedules.length; i++){
         scheduleList.push(`Schedule name:${db.getState().schedules[i].scheduleName}, Number of courses:${db.getState().schedules[i].courseName.length}`)
@@ -191,16 +175,12 @@ router.get('/disp/schedule', (req,res)=>{
 });
 
 //Task 9
-router.post('/delete/schedules',(req,res)=>{
+router.post('/deleteall/schedules',(req,res)=>{
     for(let i = 0;i<db.getState().schedules.length;i++){
         db.set('schedules',[]).write();
         res.send("done")
     }
 });
-
-
-
-
 
 
 app.use('/data', router)
