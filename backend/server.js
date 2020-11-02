@@ -166,6 +166,15 @@ router.post('/schedule/:name', (req,res)=>{
     
 });
 
+//Task 8
+router.get('/schedule', (req,res)=>{
+    let List=[];
+    for(let i = 0;i<db.getState().schedules.length;i++){
+        List.push(db.getState().schedules[i].scheduleName)
+    }
+    res.send(List);
+});
+
 
 
 
