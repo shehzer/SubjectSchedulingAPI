@@ -176,6 +176,15 @@ router.get('/schedule', (req,res)=>{
 });
 
 
+//Task 9
+router.post('/delete/schedules',(req,res)=>{
+    for(let i = 0;i<db.getState().schedules.length;i++){
+        db.set('schedules',[]).write();
+        res.send("done")
+    }
+});
+
+
 
 
 
