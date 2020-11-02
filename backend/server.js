@@ -7,11 +7,11 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 db.defaults({schedules:[]}).write();
-const cors = require('cors');
+
 var data = require('./data.json');
 
 const PORT = 4000;
-app.use(cors());
+//app.use(cors());
 
 
 
@@ -19,16 +19,22 @@ app.use(cors());
 //Setup serving front-end code
 app.use('/', express.static('static'));
 
+app.use('/api', router)
+
 // Setup middleware to do logging
 app.use((req, res, next) =>{
     console.log(req.method + " request for " + req.url );
     next(); 
 })
 
+router.get('/', (req, res) => {
+    res.send(db)
+});
+
 //Parse data in body as JSON
 router.use(express.json());
-
-router.route('/')
+//Task 1
+router.route('/courses')
     .get((req,res)=>{
         const node= data.map(function(d){
             var info = {"subject": d.subject,
@@ -41,7 +47,7 @@ router.route('/')
     })
 
    
-
+//Task 2
     router.route('/:data_subject')
 
     .get((req,res) =>{
@@ -65,8 +71,8 @@ router.route('/')
 
     })
 
-
-    router.route('/subject/:data_subject/:data_id')
+    //FIXXX IT UP BAD BOI -- add course component
+    router.route('/timetable/:data_subject/:data_id')
     .get((req,res) =>{
         const subject = req.params.data_subject;
     const id = req.params.data_id;
@@ -102,12 +108,14 @@ router.route('/')
 //task 4
 router.put('/schedule/:name', (req,res) =>{
     const name = req.params.name;
+    //check if the name already exists, if so then return error
     for(var i=0; i<db.getState().schedules.length;i++){
         if(db.getState().schedules[i].scheduleName===name){
             res.status(404).send("Error");
             return;
         }
     }
+    //if the name does not exist then create a new schedule and instatiate subject/coursename pair as json objects
     db.get('schedules').push({scheduleName:name,
                                   subject: [],
                                   courseName:[] }).write();
@@ -183,7 +191,7 @@ router.post('/deleteall/schedules',(req,res)=>{
 });
 
 
-app.use('/data', router)
+
 
 
 app.listen(PORT, function() {

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script defer src="app.js" ></script>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+<div class = "title">
+    <h1>Western TimeTable Maker</h1>
+</div>
+<div class = "searchSubject">
+    <label for="Subject"></label>
+    <input type="text" id = "Subject" placeholder="subject">
+    <button id= "myBtn">Submit</button>
+</div>
+<div class = "searchCoursename">
+    <input type="text" id = "courseName" placeholder="Course Name">
+    <button onclick="getSubjectsandCourse();">Submit</button>
+</div>
+<div class = "searchComponent">
+    <input type="text" id = "component" placeholder="Component">
+    <button onclick="getSubjectsandCourseandComponent()">Submit</button>
+</div>
+<div class = "createCourseList">
+    <input type="text" id = "courseList" placeholder="Create new schedule">
+    <button onclick="getSubjects()">Submit</button>
+</div>
+<div id="display">
+
+</div>
+</body>
+</html>
