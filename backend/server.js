@@ -40,17 +40,17 @@ router.route('/')
         res.send(node);
     })
 
-    // // Create a schedule
-    .post((req,res)=>{
-        const new_schedule = req.body;
-        data.push(new_schedule);
-        var info = {
-                "message": "The schedule" + new_schedule + "has been successfully created"
-                }
-        res.send(info);
+    // // // Create a schedule
+    // .post((req,res)=>{
+    //     const new_schedule = req.body;
+    //     data.push(new_schedule);
+    //     var info = {
+    //             "message": "The schedule" + new_schedule + "has been successfully created"
+    //             }
+    //     res.send(info);
 
 
-    })
+    // })
 
     router.route('/:data_subject')
 
@@ -82,7 +82,7 @@ router.route('/')
 
     // })
 
-    router.route('/:data_subject/:data_id')
+    router.route('/subject/:data_subject/:data_id')
     .get((req,res) =>{
         const subject = req.params.data_subject;
     const id = req.params.data_id;
@@ -115,51 +115,44 @@ router.route('/')
     }
     })
 
-
 //task 4
 router.put('/schedule/:name', (req,res) =>{
     const name = req.params.name;
     for(var i=0; i<db.getState().schedules.length;i++){
         if(db.getState().schedules[i].scheduleName===name){
-            res.status(404).send("The schedule " + name + "has been created");
+            res.status(404).send("Error");
             return;
         }
     }
-    db.get('schedule').push({scheduleName:name,
-                                  subject:"  ",
-                                  courseName:"  "}).write();
-    res.status(200).send();
+    db.get('schedules').push({scheduleName:name,
+                                  subject: [],
+                                  courseName:[] }).write();
+    res.status(200).send("The schedule " + name + " has been created");
 }); 
 
 //task 5
-app.put('/schedules/:name', (req, res) => {
+
+router.put('/write/schedule/:name',(req,res)=>{
     const name = req.params.name;
-    
-    
-    const new_node = req.body
-    //instaiate course 1 and subject to json objects
-    var course_1 = new_node.coursename;
-    var subject_1 = new_node.sub;
-    for(var i =0;i<db.getState().schedules.length;i++){
-             if(db.getState().schedules[i].scheduleName==name){
-                db.getState().schedules[i].coursename = course_1;
-                db.getState().schedules[i].sub = subject_1;
-        
-                db.update('schedule.subject_1',subject_1).write();
-
-            res.status(200).send("Put request has been recieved")
+    const schedule = req.body;
+    let subCode = schedule.subjectCode
+    let courCode = schedule.courseCode
+    for(let i =0; i<db.getState().schedules.length; i++){
+        if(db.getState().schedules[i].scheduleName===name){
+            db.getState().schedules[i].subject = subCode;
+            db.getState().schedules[i].courseName = courCode;
+            db.update('schedules').write()
+            res.status(200).send("Added")
             return;
-        
+        }
     }
-    }
-    
-    res.status(404).send("put request unsuccessful")
+    res.status(404).send('ERROR');
+});
 
+//task 6,7
+router.route('/schedules/:name/')
 
-})
-
-//task 6
-router.get('/schedule/:name/', (req,res)=>{
+    .get((req,res)=>{
     const name = req.params.name;
     
     for(let i = 0; i<db.getState().schedules.length; i++){
@@ -175,10 +168,8 @@ router.get('/schedule/:name/', (req,res)=>{
     }
     res.status(404).send("Get request have been recieved")
 
-});
-
-//task 7
-router.post('/schedule/:name', (req,res)=>{
+})
+    .post((req,res)=>{
     const sch_name = req.params.name;
     for(let i = 0; i<db.getState().schedules.length; i++){
         if(db.getState().schedules[i].scheduleName===sch_name){
@@ -191,14 +182,13 @@ router.post('/schedule/:name', (req,res)=>{
 });
 
 //Task 8
-router.get('/schedule', (req,res)=>{
-    let List=[];
-    for(let i = 0;i<db.getState().schedules.length;i++){
-        List.push(db.getState().schedules[i].scheduleName)
+router.get('/disp/schedule', (req,res)=>{
+    let scheduleList=[];
+    for(let i = 0; i<db.getState().schedules.length; i++){
+        scheduleList.push(`Schedule name:${db.getState().schedules[i].scheduleName}, Number of courses:${db.getState().schedules[i].courseName.length}`)
     }
-    res.send(List);
+    res.send(scheduleList);
 });
-
 
 //Task 9
 router.post('/delete/schedules',(req,res)=>{
