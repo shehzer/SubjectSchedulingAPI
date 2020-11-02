@@ -153,7 +153,18 @@ router.get('/schedule/:name/', (req,res)=>{
 
 });
 
-
+//task 7
+router.post('/schedule/:name', (req,res)=>{
+    const sch_name = req.params.name;
+    for(let i = 0; i<db.getState().schedules.length; i++){
+        if(db.getState().schedules[i].scheduleName===sch_name){
+            db.get("schedules").remove({scheduleName: sch_name}).write();
+            res.send("Posted")
+        }
+    }
+    res.status(404).send("Name doesn't exist")
+    
+});
 
 
 
