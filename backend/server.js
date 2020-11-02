@@ -131,6 +131,33 @@ router.put('/schedule/:name', (req,res) =>{
     res.status(200).send();
 }); 
 
+//task 5
+
+
+//task 6
+router.get('/schedule/:name/', (req,res)=>{
+    const name = req.params.name;
+    
+    for(let i = 0; i<db.getState().schedules.length; i++){
+        if(db.getState().schedules[i].scheduleName===name){
+            first =db.getState().schedules[i].courseName
+            second = db.getState().schedules[i].subject;
+            const display = first +" "+second;
+  
+            res.send(display);
+            return;
+
+        }
+    }
+    res.status(404).send("Get request have been recieved")
+
+});
+
+
+
+
+
+
 
 
 app.use('/data', router)
