@@ -132,7 +132,31 @@ router.put('/schedule/:name', (req,res) =>{
 }); 
 
 //task 5
+app.put('/schedules/:name', (req, res) => {
+    const name = req.params.name;
+    
+    
+    const new_node = req.body
+    //instaiate course 1 and subject to json objects
+    var course_1 = new_node.coursename;
+    var subject_1 = new_node.sub;
+    for(var i =0;i<db.getState().schedules.length;i++){
+             if(db.getState().schedules[i].scheduleName==name){
+                db.getState().schedules[i].coursename = course_1;
+                db.getState().schedules[i].sub = subject_1;
+        
+                db.update('schedule.subject_1',subject_1).write();
 
+            res.status(200).send("Put request has been recieved")
+            return;
+        
+    }
+    }
+    
+    res.status(404).send("put request unsuccessful")
+
+
+})
 
 //task 6
 router.get('/schedule/:name/', (req,res)=>{
