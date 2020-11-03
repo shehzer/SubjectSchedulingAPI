@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <script defer src="app.js" ></script>
-    <link rel="shortcut icon" href="#">
+    <script src="app.js"></script>
+    <link rel = "stylesheet" type = "text/css" href = "/style.css">
 </head>
 <body>
 <div class = "title">
@@ -13,21 +13,47 @@
 <div class = "searchSubject">
     <label for="Subject"></label>
     <input type="text" id = "Subject" placeholder="subject">
-    <button id= "myBtn">Submit</button>
+    <button onclick="getSubjects()">Submit</button>
 </div>
 <div class = "searchCoursename">
     <input type="text" id = "courseName" placeholder="Course Name">
-    <button onclick="getSubjectsandCourse();">Submit</button>
+    <button onclick="getSubjectsandCourse()">Submit</button>
 </div>
 <div class = "searchComponent">
     <input type="text" id = "component" placeholder="Component">
     <button onclick="getSubjectsandCourseandComponent()">Submit</button>
 </div>
+
 <div class = "createCourseList">
+    <label for="courseList"></label>
     <input type="text" id = "courseList" placeholder="Create new schedule">
-    <button onclick="getSubjects()">Submit</button>
+    <button onclick="nameSchedule()">Submit</button>
+</div>
+<div class = "addContent">
+    <button onclick="addContent()">Add subject + course</button>
+</div>
+<div class = "deleteSchedName">
+    <button onclick="deleteSchedName()">Delete specific Schedule</button>
+</div>
+<div class = "deleteAll">
+    <button onclick="deleteSchedAll()">Delete all Schedules</button>
+</div>
+<div class = "displaySchedule">
+    <button onclick="displaySchedule()">Display specific schedule</button>
+</div>
+<div class = "listAll">
+    <button onclick="listOfSchedules()">list all schedules</button>
 </div>
 <div id="display">
+
+</div>
+<div id="newButton">
+
+</div>
+<ul id= "list">
+</ul>
+<table id = "display1" class = list></table>
+
 
 </div>
 </body>

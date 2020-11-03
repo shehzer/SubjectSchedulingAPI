@@ -1,4 +1,3 @@
-//const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 const express = require('express');
 const app = express();
 const router = express.Router();
@@ -72,38 +71,19 @@ router.route('/courses')
     })
 
     //FIXXX IT UP BAD BOI -- add course component
-    router.route('/timetable/:data_subject/:data_id')
-    .get((req,res) =>{
-        const subject = req.params.data_subject;
-    const id = req.params.data_id;
-    var exists = data.find(d => d.subject === subject);
-    var not_Id = data.find( d=> d.catalog_nbr === id);
-    var node = data.filter(function(d){
-        return  d.subject ===subject;
-    })
-    .filter(function(d){
-        return d.catalog_nbr.toString() ===id;
-    })
-    .map(function(d){
-        var info = {
-
-                    "subject": d.subject,
-                    "catalog_nbr": d.catalog_nbr,
-                    "course info": d.course_info 
-                   }
-        return info;
+    router.get('/timetable/:classes_subjects/:course_code/:course_component?', (req, res) => {
+        const subjects = data.filter(c => c.subject.toString().toUpperCase() === req.params.classes_subjects.toString().toUpperCase());
+        const course_code = subjects.filter(c => c.catalog_nbr.toString().toUpperCase() === req.params.course_code.toString().toUpperCase());
+        if (subjects.length===0 || course_code.length===0) {
+            res.status(404).send(`Subject ${subjects} was not found or course code ${course_code} was not found.`);
+        }
+        if(course_code.filter(c => c.course_info[0].ssr_component.toUpperCase() === req.params.course_component)){
+            res.send(course_code)
+        }
+        else {
+            res.send(course_code)
+        }
     });
-
-    if(!exists){
-        res.status(404).send("Subject " + subject + " was not found");
-    }
-    else if(!not_Id){
-        res.status(404).send("Class code " + id + " was not found");
-    }
-    else{
-        res.send(node);
-    }
-    })
 
 //task 4
 router.put('/schedule/:name', (req,res) =>{
