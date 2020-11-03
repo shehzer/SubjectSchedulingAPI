@@ -1,9 +1,14 @@
 {
   "schedules": [
     {
-      "scheduleName": "shehzer8",
+      "scheduleName": "SHEHZER",
       "subject": "Acursci",
       "courseName": "1032"
+    },
+    {
+      "scheduleName": "SHEHZER1",
+      "subject": "ACTURSCI",
+      "courseName": "1021B"
     }
   ]
 }

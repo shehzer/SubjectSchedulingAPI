@@ -2,5 +2,22 @@
     
     width: 100px;
     border: '1px solid black';
+    background-color: lightpink;
 }
 
+.list td, .list th {
+    border: 1px solid black;
+    padding: 8px;
+  }
+  
+  .list tr:nth-child(even){background-color: #f2f2f2;}
+  
+  .list tr:hover {background-color: purple;}
+  
+  .list th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color:#f2f2f2;
+    color: black;
+  }

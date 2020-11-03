@@ -21,7 +21,7 @@ function getSubjectsandCourse(){
     let cInput = document.getElementById("courseName").value.toUpperCase();
     fetch(`/api/timetable/${sInput}/${cInput}`).then(res => res.json()).then(data => {
         console.log(data);
-        console.log(data[0]["course info"][0].ssr_component);
+        console.log(data[0].course_info[0].ssr_component);
         var exists = data.filter(function(d){
             return d.subject === sInput
         })
@@ -31,16 +31,16 @@ function getSubjectsandCourse(){
     
                     "subject": d.subject,
                     "catalog_nbr": d.catalog_nbr,
-                    "ssr_component": data[i]["course info"][j].ssr_component,
-                    "class_nbr": data[i]["course info"][j].class_nbr,
-                    "start_time": data[i]["course info"][j].start_time,
-                    "descrlong": data[i]["course info"][j].descrlong,
-                    "end_time": data[i]["course info"][j].end_time,
-                    "campus": data[i]["course info"][j].campus,
-                    "facility_ID": data[i]["course info"][j].facility_ID,
-                    "days": data[i]["course info"][j].days[k],
-                    "class_section": data[i]["course info"][j].class_section,
-                    "enrl_stat": data[i]["course info"][j].enrl_stat,
+                    "ssr_component": data[i].course_info[j].ssr_component,
+                    "class_nbr": data[i].course_info[j].class_nbr,
+                    "start_time": data[i].course_info[j].start_time,
+                    "end_time": data[i].course_info[j].end_time,
+                    "campus": data[i].course_info[j].campus,
+                    "facility_ID": data[i].course_info[j].facility_ID,
+                    "days": data[i].course_info[j].days[k],
+                    "class_section": data[i].course_info[j].class_section,
+                    "enrl_stat": data[i].course_info[j].enrl_stat,
+                    "descrlong": data[i].course_info[j].descrlong,
                     
 
                    }
@@ -49,25 +49,11 @@ function getSubjectsandCourse(){
                    k++
                    return info;
             
-            // var info = {
-    
-            //             "subject": d.subject,
-            //             "catalog_nbr": d.catalog_nbr,
-            //             "course info": data[0]["course info"][0].ssr_component
-
-            //            }
-            
         });
         data = JSON.stringify(exists)
-        console.log(exists);
-
-                
-            
-          console.log(makeTable(exists));
-          document.getElementById('display1').innerHTML = makeTable(exists);
-      
-       // document.getElementById('display').textContent = data;
-        //searchSubandCourse(data)
+        console.log(exists);       
+        console.log(makeTable(exists));
+        document.getElementById('display1').innerHTML = makeTable(exists);
     })
 }
 function getSubjectsandCourseandComponent(){
@@ -77,11 +63,24 @@ function getSubjectsandCourseandComponent(){
     fetch(`/api/timetable/${sInput}/${cInput}/${comInput}`).then(res => res.json()).then(data => {
         console.log(data[0].className)
         console.log(data);
-        data = JSON.stringify(data)
+        var exists = data.filter(function(d){
+            return d.catalog_nbr.toString().toUpperCase() === cInput;
+        })
+        .map(function(d){
+            var i=0, j=0
+            var info = {
+                "subject": d.subject,
+                "catalog_nbr": d.catalog_nbr,
+                "ssr_component": data[i].course_info[j].ssr_component,
+            }
+            i++;
+            j++;
+            return info;
+        });
+        data = JSON.stringify(exists)
 
-        Console.log(makeTable(data));
-        makeTable(data)
-        document.getElementById('display').textContent = data;
+        console.log(makeTable(exists));
+        document.getElementById('display1').innerHTML = makeTable(exists);
     
     })
 }
@@ -94,6 +93,9 @@ function nameSchedule(){
         if (res.status === 404){
             document.getElementById('display').textContent = "Name already exists!"
         }
+        else{
+            document.getElementById('display').textContent = "Schedule " + scheduleName + " has been created"
+        }
     })
 }
 
@@ -101,21 +103,21 @@ function addContent(){
     let scheduleName = document.getElementById('courseList').value.toUpperCase()
     let sInput = document.getElementById("Subject").value.toUpperCase();
     let cInput = document.getElementById("courseName").value.toUpperCase();
-    fetch(`/api/write/schedule/${scheduleName}`, {
+    fetch(`/api/create/schedule/${scheduleName}`, {
         method: 'PUT',
         headers:{'Content-Type': 'application/json'},
-        body: JSON.stringify({"subject": sInput,
-            "catalog_nbr": cInput})
+        body: JSON.stringify({"subjectCode": sInput,
+                              "courseCode": cInput})
     }).then(res =>{
         if (res.status === 404){
             document.getElementById('display').textContent = "Name doesn't exist!"
         }
     })
 }
-
+//fix this to make it show a schedule
 function displaySchedule(){
     let scheduleName = document.getElementById('courseList').value.toUpperCase()
-    fetch(`/api/display/schedule/${scheduleName}`,{
+    fetch(`/api/schedules/${scheduleName}`,{
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
@@ -125,18 +127,19 @@ function displaySchedule(){
             document.getElementById("display").textContent = "Error no schedule exists"
         }
         res.text().then(data => {
+            
             document.getElementById("display").textContent = `Schedule: ${scheduleName} Classes + data`;
         })
     })
 }
 function listOfSchedules(){
-    fetch(`/api/disp/schedule`).then(res => res.json()).then(data => {
+    fetch(`/api/show/schedule`).then(res => res.json()).then(data => {
         document.getElementById("display").textContent = JSON.stringify(data)
     })
 }
 function deleteSchedName() {
     let scheduleName = document.getElementById('courseList').value.toUpperCase()
-    fetch(`/api/schedule/${scheduleName}`,{
+    fetch(`/api/schedules/${scheduleName}`,{
         method: 'POST'
     }).then(res =>{
         if (res.status ===404){
@@ -145,7 +148,7 @@ function deleteSchedName() {
     })
 }
 function deleteSchedAll() {
-    fetch(`/api/delete/schedules`,{
+    fetch(`/api/deleteall/schedules`,{
         method: 'POST'
     }).then(res => res.json()).then(data => {
         document.getElementById('display').textContent = "Deleted all schedules!"
@@ -180,18 +183,18 @@ function deleteSchedAll() {
 
 
 
-function display(data){
-    const ol = document.getElementById('list');
-       data.forEach(element => {
-           const item = document.createElement('li');
-           item.style.width  = '100px';
-           item.style.border = '1px solid black';
+// function display(data){
+//     const ol = document.getElementById('list');
+//        data.forEach(element => {
+//            const item = document.createElement('li');
+//            item.style.width  = '100px';
+//            item.style.border = '1px solid black';
 
-           item.appendChild(document.createTextNode(`Subject: ${element.subject} Course:${element.catalog_nbr}`));
-           ol.appendChild(item);
+//            item.appendChild(document.createTextNode(`Subject: ${element.subject} Course:${element.catalog_nbr}`));
+//            ol.appendChild(item);
 
-       })
-}
+//        })
+// }
 
 
 
