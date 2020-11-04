@@ -1,8 +1,6 @@
-
-
 async function getSubjects(){
-    let sInput = document.getElementById("Subject").value.toUpperCase();
-    fetch(`/api/${sInput}`).then(res => res.json()).then(data => {
+    let subject_input = document.getElementById("Subject").value.toUpperCase();
+    fetch(`/api/${subject_input}`).then(res => res.json()).then(data => {
         console.log(data)
        // searchSub(data)
       //display(data);
@@ -16,14 +14,14 @@ async function getSubjects(){
 
 
 
-function getSubjectsandCourse(){
-    let sInput = document.getElementById("Subject").value.toUpperCase();
-    let cInput = document.getElementById("courseName").value.toUpperCase();
-    fetch(`/api/timetable/${sInput}/${cInput}`).then(res => res.json()).then(data => {
+function getSubsandCourse(){
+    let sub = document.getElementById("Subject").value.toUpperCase();
+    let course = document.getElementById("course").value.toUpperCase();
+    fetch(`/api/subject/${sub}/${course}`).then(res => res.json()).then(data => {
         console.log(data);
         console.log(data[0].course_info[0].ssr_component);
         var exists = data.filter(function(d){
-            return d.subject === sInput
+            return d.subject === sub
         })
         .map(function(d){
             var i =0, j=0, k=0
@@ -56,15 +54,15 @@ function getSubjectsandCourse(){
         document.getElementById('display1').innerHTML = makeTable(exists);
     })
 }
-function getSubjectsandCourseandComponent(){
-    let sInput = document.getElementById("Subject").value.toUpperCase();
-    let cInput = document.getElementById("courseName").value.toUpperCase();
-    let comInput = document.getElementById("component").value.toUpperCase();
-    fetch(`/api/timetable/${sInput}/${cInput}/${comInput}`).then(res => res.json()).then(data => {
+function getSubsandCourseandComp(){
+    let sub = document.getElementById("Subject").value.toUpperCase();
+    let cour = document.getElementById("course").value.toUpperCase();
+    let comp = document.getElementById("component").value.toUpperCase();
+    fetch(`/api/subject/${sub}/${cour}/${comp}`).then(res => res.json()).then(data => {
         console.log(data[0].className)
         console.log(data);
         var exists = data.filter(function(d){
-            return d.catalog_nbr.toString().toUpperCase() === cInput;
+            return d.catalog_nbr.toString().toUpperCase() === cour;
         })
         .map(function(d){
             var i=0, j=0
@@ -85,13 +83,13 @@ function getSubjectsandCourseandComponent(){
     })
 }
 
-function nameSchedule(){
+function name_new(){
     let scheduleName = document.getElementById('courseList').value.toUpperCase()
     fetch(`api/schedule/${scheduleName}`, {
         method: 'PUT'
     }).then(res =>{
         if (res.status === 404){
-            document.getElementById('display').textContent = "Name already exists!"
+            document.getElementById('display').textContent = "Name exists, please use a new name!"
         }
         else{
             document.getElementById('display').textContent = "Schedule " + scheduleName + " has been created"
@@ -99,15 +97,15 @@ function nameSchedule(){
     })
 }
 
-function addContent(){
+function add_new(){
     let scheduleName = document.getElementById('courseList').value.toUpperCase()
-    let sInput = document.getElementById("Subject").value.toUpperCase();
-    let cInput = document.getElementById("courseName").value.toUpperCase();
+    let sub = document.getElementById("Subject").value.toUpperCase();
+    let cour = document.getElementById("course").value.toUpperCase();
     fetch(`/api/create/schedule/${scheduleName}`, {
         method: 'PUT',
         headers:{'Content-Type': 'application/json'},
-        body: JSON.stringify({"subjectCode": sInput,
-                              "courseCode": cInput})
+        body: JSON.stringify({"subjectCode": sub,
+                              "courseCode": cour})
     }).then(res =>{
         if (res.status === 404){
             document.getElementById('display').textContent = "Name doesn't exist!"
@@ -115,43 +113,69 @@ function addContent(){
     })
 }
 //fix this to make it show a schedule
-function displaySchedule(){
-    let scheduleName = document.getElementById('courseList').value.toUpperCase()
-    fetch(`/api/schedules/${scheduleName}`,{
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }).then(res => {
-        if (res.status === 404) {
-            document.getElementById("display").textContent = "Error no schedule exists"
-        }
-        res.text().then(data => {
-            
-            document.getElementById("display").textContent = `Schedule: ${scheduleName} Classes + data`;
-        })
+function display(){
+    let scheduleName = document.getElementById('courseList').value.toUpperCase();
+    fetch(`/api/schedules/${scheduleName}`).then(res => res.json()).then(data => {
+       // console.log(data[0].className)
+       // console.log(JSON.stringify(data));
+       console.log(data);
+       let result = Object.keys(data).map(e => {
+            var info = {
+                "subject": data.subject,
+                "course" : data.course
+            };
+        return info;
+    });
+        console.log(result[0]);
+        document.getElementById('display1').innerHTML = makeTable1(result);
+        document.getElementById("display").textContent = `Schedule: ${scheduleName}`;
+
+
     })
 }
-function listOfSchedules(){
+
+
+
+function list_Schedules(){
     fetch(`/api/show/schedule`).then(res => res.json()).then(data => {
-        document.getElementById("display").textContent = JSON.stringify(data)
+        console.log(data);
+        console.log(data.length)
+    //     let result = Object.keys(data).map(e => {
+    //         var info = {
+    //             "Schedule name": data[0]["Schedule name"],
+    //             "course" : data[0]["Number courses"]
+    //         };
+    //     return info;
+    // });
+    // console.log(result)
+    if(data.length ==0){
+        document.getElementById('display').textContent = "You have no Schedules!!!"
+        document.getElementById('display1').innerHTML = makeTable2(data);
+
+    }
+    else{
+        document.getElementById('display1').innerHTML = makeTable(data);
+    }
+   
+
+        //document.getElementById("display").textContent = JSON.stringify(data)
     })
 }
-function deleteSchedName() {
+function delete_Schedule() {
     let scheduleName = document.getElementById('courseList').value.toUpperCase()
     fetch(`/api/schedules/${scheduleName}`,{
         method: 'POST'
     }).then(res =>{
         if (res.status ===404){
-            document.getElementById('display').textContent = "Name doesn't exist!"
+            document.getElementById('display').textContent = "Schedule Name does not exist!"
         }
     })
 }
-function deleteSchedAll() {
+function delete_All() {
     fetch(`/api/deleteall/schedules`,{
         method: 'POST'
     }).then(res => res.json()).then(data => {
-        document.getElementById('display').textContent = "Deleted all schedules!"
+        document.getElementById('display').textContent = "All schedules have been deleted!"
     })
 }
 
@@ -211,6 +235,48 @@ function makeTable(D){
       a += '<tr>';
       for(j=0;j<cols.length;j++) {
         a += `<td>${D[i][cols[j]]}</td>`;
+      }
+      a += '</tr>';
+    }
+    a += '</tbody></table>';
+    return a;
+  }
+
+
+  function makeTable1(D){
+    var a = '';
+    cols = Object.keys(D[0]);
+    a += '<table><thead><tr>';
+    for(j=0;j<cols.length;j++) {
+      a+= `<th>${cols[j]}</th>`;
+    }
+    a += '</tr></thead><tbody>';
+  
+    for(i=0;i<D.length; i=2) {
+      a += '<tr>';
+      for(j=0;j<cols.length;j++) {
+        a += `<td>${D[0][cols[j]]}</td>`;
+      }
+      a += '</tr>';
+    }
+    a += '</tbody></table>';
+    return a;
+  }
+
+  
+  function makeTable2(D){
+    var a = '';
+    cols = Object.keys(D);
+    a += '<table><thead><tr>';
+    for(j=0;j<cols.length;j++) {
+      a+= `<th>${cols[j]}</th>`;
+    }
+    a += '</tr></thead><tbody>';
+  
+    for(i=0;i<D.length; i=2) {
+      a += '<tr>';
+      for(j=0;j<cols.length;j++) {
+        a += `<td>${D[0][cols[j]]}</td>`;
       }
       a += '</tr>';
     }

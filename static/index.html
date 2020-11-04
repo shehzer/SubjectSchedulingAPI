@@ -2,47 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Western Schedule Maker</title>
     <script src="app.js"></script>
     <link rel = "stylesheet" type = "text/css" href = "/style.css">
 </head>
 <body>
 <div class = "title">
-    <h1>Western TimeTable Maker</h1>
+    <h1 class = "h1">Western Schedule Maker</h1>
 </div>
-<div class = "searchSubject">
+<div>
     <label for="Subject"></label>
-    <input type="text" id = "Subject" placeholder="subject">
+    <input type="text" id = "Subject" placeholder="Subject">
     <button onclick="getSubjects()">Submit</button>
 </div>
-<div class = "searchCoursename">
-    <input type="text" id = "courseName" placeholder="Course Name">
-    <button onclick="getSubjectsandCourse()">Submit</button>
+<div>
+    <input type="text" id = "course" placeholder="Course Code">
+    <button onclick="getSubsandCourse()">Submit</button>
 </div>
-<div class = "searchComponent">
+<div>
     <input type="text" id = "component" placeholder="Component">
-    <button onclick="getSubjectsandCourseandComponent()">Submit</button>
+    <button onclick="getSubsandCourseandComp()">Submit</button>
 </div>
 
-<div class = "createCourseList">
+<div class = "space">
     <label for="courseList"></label>
-    <input type="text" id = "courseList" placeholder="Create new schedule">
-    <button onclick="nameSchedule()">Submit</button>
+    <input type="text" id = "courseList" placeholder="Create a new schedule">
+    <button onclick="name_new()">Submit</button>
 </div>
-<div class = "addContent">
-    <button onclick="addContent()">Add subject + course</button>
+<div>
+    <button class ="but" onclick="add_new()"> Add a subject and course</button>
 </div>
-<div class = "deleteSchedName">
-    <button onclick="deleteSchedName()">Delete specific Schedule</button>
+<div>
+    <button class = "but" onclick="display()">Display a specified schedule</button>
 </div>
-<div class = "deleteAll">
-    <button onclick="deleteSchedAll()">Delete all Schedules</button>
+<div >
+    <button class = "but" onclick="delete_Schedule()">Delete a specified Schedule</button>
 </div>
-<div class = "displaySchedule">
-    <button onclick="displaySchedule()">Display specific schedule</button>
+<div >
+    <button class = "but" onclick="delete_All()">Delete all Schedules</button>
 </div>
-<div class = "listAll">
-    <button onclick="listOfSchedules()">list all schedules</button>
+<div >
+    <button class = "but" onclick="list_Schedules()">list all schedules</button>
 </div>
 
 </div>
@@ -51,8 +51,8 @@
 </div>
 <ul id= "list">
 </ul>
-<table id = "display1" class = list></table>
 <div id="display"></div>
+<table id = "display1" class = list></table>
 
 
 </div>

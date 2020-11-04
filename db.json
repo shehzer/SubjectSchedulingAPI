@@ -1,14 +1,14 @@
 {
   "schedules": [
     {
-      "scheduleName": "SHEHZER",
-      "subject": "Acursci",
-      "courseName": "1032"
+      "scheduleName": "JACK",
+      "subject": "STATS",
+      "courseName": "1023A"
     },
     {
-      "scheduleName": "SHEHZER1",
-      "subject": "ACTURSCI",
-      "courseName": "1021B"
+      "scheduleName": "ЭЙ",
+      "subject": "STATS",
+      "courseName": "1023A"
     }
   ]
 }
