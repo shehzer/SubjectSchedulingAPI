@@ -31,7 +31,7 @@ router.use(expressSanitizer());
 
 
 //Task 1
-router.route('/courses',)
+router.route('courses',)
     .get((req,res)=>{
         const node= data.map(function(d){
             var info = {"subject": d.subject,
