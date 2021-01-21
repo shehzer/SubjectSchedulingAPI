@@ -1,1 +1,3 @@
-# se3316-snaumani-lab3
+# Backend Service
+
+Practice project used to a REST api backend service with a static frontend
